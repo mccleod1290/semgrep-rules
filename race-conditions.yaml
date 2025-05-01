@@ -1,0 +1,37 @@
+rules:
+  - id: race-condition-toctou-comprehensive
+    patterns:
+      - pattern-either:
+          # Async/await pattern
+          - patterns:
+              - pattern-inside: |
+                  async $FUNC($REQ, $RES) {
+                    ...
+                    const $USER = await $DB.getUser($USERNAME);
+                    ...
+                    if (!$USER.$FIELD.includes($CODE)) {
+                      ...
+                      await $DB.$METHOD($USER.$ID, $CODE);
+                      ...
+                    }
+                    ...
+                  }
+              - pattern-not: await $DB.transaction(async $CONN => { ... })
+          # Promise chain pattern
+          - patterns:
+              - pattern-inside: |
+                  $DB.getUser($USERNAME).then($USER => {
+                    ...
+                    if (!$USER.$FIELD.includes($CODE)) {
+                      ...
+                      $DB.$METHOD($USER.$ID, $CODE);
+                      ...
+                    }
+                    ...
+                  })
+              - pattern-not: $DB.transaction()
+    message: |
+      Time-of-Check to Time-of-Use (TOCTOU) race condition detected. 
+      Multiple database operations should be wrapped in a transaction.
+    languages: [javascript]
+    severity: ERROR
