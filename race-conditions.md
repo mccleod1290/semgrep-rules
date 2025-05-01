@@ -318,6 +318,63 @@ rules:
     severity: ERROR
 ```
 
+## Testing
+
+```bash
+┌──(semgrep)─(kali㉿kali)-[~/Downloads/web_diogenes_rage/challenge]
+└─$ semgrep --config race-conditions.yaml routes/index.js
+
+┌──── ○○○ ────┐
+│ Semgrep CLI │
+└─────────────┘
+
+                                                                                                                        
+Scanning 1 file (only git-tracked) with 1 Code rule:
+            
+  CODE RULES
+  Scanning 1 file.
+                    
+  SUPPLY CHAIN RULES
+                  
+  No rules to run.
+                  
+          
+  PROGRESS
+   
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00                                                                                                                        
+[ERROR] Rule parse error in rule race-condition-toctou-comprehensive:
+ Invalid pattern for JavaScript: Stdlib.Parsing.Parse_error
+----- pattern -----
+async $FUNC($REQ, $RES) {
+  ...
+  const $USER = await $DB.getUser($USERNAME);
+  ...
+  if (!$USER.$FIELD.includes($CODE)) {
+    ...
+    await $DB.$METHOD($USER.$ID, $CODE);
+    ...
+  }
+  ...
+}
+
+----- end pattern -----
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 0 (0 blocking)
+ • Rules run: 1
+ • Targets scanned: 1
+ • Parsed lines: ~100.0%
+ • No ignore information availabl
+```
+
+As you can see, we were able to detect and scan for this vulnerability with updated `yaml` template.
+
+
 ## Conclusion
 
 Creating effective Semgrep rules for race conditions requires a deep understanding of both the vulnerability pattern and the limitations of static analysis. By focusing on specific, high-risk patterns like the coupon redemption vulnerability in Diogenes' Rage, we can develop rules that help identify similar issues across codebases.
