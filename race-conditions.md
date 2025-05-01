@@ -328,4 +328,4 @@ By building a library of targeted rules for common race condition patterns, you 
 
 ---
 
-*This blog post is based on the race condition vulnerability in the HTB Diogenes' Rage challenge. The Semgrep rules and code patterns are provided for educational purposes to improve security practices.*
+*This post is based on the race condition vulnerability in the HTB Diogenes' Rage challenge. The Semgrep rules and code patterns are provided for educational purposes to improve security practices.*
